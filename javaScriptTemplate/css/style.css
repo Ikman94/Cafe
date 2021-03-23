@@ -1,0 +1,126 @@
+html{
+    font-size: 62.5%;
+    box-sizing: border-box;
+}
+body{
+    margin: 0;
+    height: 100vh;
+    font-size: 1.6rem;
+    /* font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
+}
+
+/* Layout */
+.grid-container{
+    display: grid;
+    grid-template-areas: 
+    'header'
+    'main'
+    'footer';
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr, 1fr,1fr ;
+    height: 100%;
+}
+header{
+    grid-area: header;
+    background-color: black;
+    /* width: 100%; */
+}
+main{
+    grid-area: main;
+    
+    background-color: rgb(239,233,228);
+    background-image:
+     linear-gradient(
+      to bottom, 
+      rgb(239,233,228),
+      rgb(239,233,228) 40%,
+      #ffff 1%,
+      #ffff 100%,
+      rgb(239,233,228) 85% 
+    );
+  border-radius: 5px;
+}
+footer{
+    grid-area: footer;
+    background-color: rgb(38, 38, 38);
+    color: white;
+    padding: 5rem;
+}
+/* Common */
+/* a{
+    text-decoration: none;
+    color: #e6d6cd;
+} */
+a:hover{
+    color: white;
+}
+/* Heeader */
+header a{
+    text-decoration: none;
+    color: #e6d6cd;
+}
+.row{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+.row.center {
+  justify-content: center;
+}
+.header-links a{
+    padding-right: 20px;
+}
+/* menu-header */
+.menu-header{
+    padding: 10rem 0rem 5rem 17rem;
+
+}
+/* Image */
+/* img {
+  border-radius: 0.5rem;
+} */
+img.medium {
+  max-width: 35rem;
+  width: 100%;
+}
+
+/* Card */
+.card {
+  border: none;
+  background-color: #f8f8f8;
+  margin: 1rem;
+}
+.card-body {
+  padding: 1rem;
+  background-color: white;
+}
+.card-body > * {
+  margin-bottom: 0.5rem;
+}
+.card-body-button button{
+    width: 17rem;
+    padding: 0.7rem;
+    font-size: 20px;
+    font-weight: lighter;
+    border: 1px solid white;
+    color: black;
+    margin-left: 8rem;
+}
+.card-body-button button:hover{
+    background-color: white;
+    border: 1px solid black;
+    color: white;
+}
+
+footer h5 {
+    font-size: 1rem;
+    line-height: 1.375;
+    font-weight: 500;
+    color: #ffff;
+}
+footer a{
+  color: #e6d6cd;
+  font-size: 12px;
+  font-weight: 200;
+}

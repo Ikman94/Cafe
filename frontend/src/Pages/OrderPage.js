@@ -44,7 +44,7 @@ export default function OrderPage(props) {
                 }
             }
         }
-    }, [dispatch, orderId, order, sdkReady]);
+    }, [dispatch, orderId, order, sdkReady, successPay]);
 
     const successPaymentHandler = (paymentResult) => {
         dispatch(payOrder(order, paymentResult))

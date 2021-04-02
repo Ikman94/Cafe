@@ -5,6 +5,7 @@ const dotenv = require('dotenv')
 const port = process.env.PORT || 5000;
 const URL = "mongodb://localhost/TAP";
 const Routes = require('./api/index.js');
+// const AdminRoutes = require('./api/index2.js');
 
 dotenv.config();
 
@@ -34,12 +35,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 
 app.use('/api/', Routes);
+// app.use('/', AdminRoutes);
+
 app.get('/api/config/paypal', (req, res) => {
     res.send(process.env.PAYPAL_CLIENT_ID  || 'sb')
 })
-app.use((err, req, res, next) => {
-    res.status(500).send({ message: err.message })
-});
+// app.use((err, req, res, next) => {
+//     res.status(500).send({ message: err.message })
+// });
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)
 });

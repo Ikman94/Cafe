@@ -12,6 +12,9 @@ import OrderPage from './Pages/OrderPage';
 import OrderHistoryPage from './Pages/orderHistoryPage';
 import ProfilePage from './Pages/profilePage';
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
+import ProductListPage from './Pages/productListPage';
+import ProductEditPage from './Pages/productEditPage';
 
 
 function App() {
@@ -68,8 +71,22 @@ function App() {
                 )
             }
             {userInfo && userInfo.isAdmin && (
-              <div className="">
+              <div className="dropdown">
                 <Link to="#admin">Admin <i className="fa fa-caret-down"></i> </Link>
+                <ul className="dropdown-content list-group">
+                  <li>
+                    <Link to="/dashboard">Dashboard</Link>
+                  </li>
+                  <li>
+                    <Link to="/productlist">Products</Link>
+                  </li>
+                  <li>
+                    <Link to="/orderlist">Orders</Link>
+                  </li>
+                  <li>
+                    <Link to="/userlist">Users</Link>
+                  </li>
+                </ul>
               </div>
             )}
 
@@ -80,6 +97,7 @@ function App() {
           <Route exact path="/signin" component={SigninPage}></Route>
           <Route exact path="/shop" component={ShopPage}></Route>
           <Route exact path="/product/:id" component={ProductPage}></Route>
+          <Route exact path="/product/:id/edit" component={ProductEditPage}></Route>
           <Route exact path="/cart/:id?" component={CartPage}></Route>
           <Route exact path="/shipping" component={ShippingAddressPage}></Route>
           <Route exact path="/payment" component={PaymentPage}></Route>
@@ -87,6 +105,7 @@ function App() {
           <Route exact path="/order/:id" component={OrderPage}></Route>
           <Route exact path="/orderhistory" component={OrderHistoryPage}></Route>
           <PrivateRoute exact path="/profile" component={ProfilePage}></PrivateRoute>
+          <AdminRoute exact path="/productlist" component={ProductListPage}></AdminRoute>
         </main>
 
         <footer className="footer">

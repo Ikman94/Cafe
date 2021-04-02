@@ -9,10 +9,8 @@ const isAdmin = require('../../utils');
 let routes = (app) => {
     app.get('/products', expressAsyncHandler(async (req, res) => {
         let products = await Product.find({});
-        
         products = JSON.parse(JSON.stringify(products))
         let data = { title: "Products", products }
-        // res.render("pages/products", data)
         res.send(products);
     }));
 
@@ -32,18 +30,42 @@ let routes = (app) => {
     }));
 
     app.post('/products', isAuth, isAdmin, expressAsyncHandler(async (req, res)=>{
-        let product = new Product(req.body);
-
-        await product.save((err, data) => {
-            if (err) {
-                return res.status(500).send({
-                    message: err.message || "Some error occurred while creating the Order."
-                })
-            }
-            console.log(req.body.date)
-            res.redirect('/products')
+        let product = new Product({
+            name: 'Mango',
+            image: '/img/watch1.png',
+            price: 6000,
+            category: 'Cookies',
+            brand: 'Maya',
+            sku: '32256',
+            countInStock: '20',
+            rating: '5',
+            numReviews: '20',
+            description: 'Beautiful infused Hungarian spice cookies'
         });
+
+       const createdProduct = await product.save();
+        res.send({ message: 'Product created', product: createdProduct});
     }));
+
+    app.put('/products/:id', isAuth, isAdmin, expressAsyncHandler(async (req, res) => {
+        const productId = req.params.id
+        let product = await Product.findById(productId)
+        if(product){
+            product.name = req.body.name || product.name;
+            product.price = req.body.price || product.price;
+            product.image = req.body.image || product.image;
+            product.category = req.body.category || product.category;
+            product.countInStock = req.body.countInStock || product.countInStock;
+            product.sku = req.body.sku || product.sku;
+            product.brand = req.body.brand || product.brand;
+            product.description = req.body.description || product.description;
+
+            const updatedProduct = await product.save()
+            res.send({message: 'Product Updated', updatedProduct})
+        }else{
+            res.status(404).send({message: 'Product not Found'})
+        }
+    }))
 
 }
 

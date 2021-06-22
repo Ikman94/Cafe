@@ -25,12 +25,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ikman94/tap-app.git"
+    "url": "git+https://github.com/Ikman94/Cafe.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Ikman94/tap-app/issues"
+    "url": "https://github.com/Ikman94/Cafe/issues"
   },
-  "homepage": "https://github.com/Ikman94/tap-app#readme"
+  "homepage": "https://github.com/Ikman94/Cafe"
 }

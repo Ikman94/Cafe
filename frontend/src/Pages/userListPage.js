@@ -1,48 +1,55 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { createProduct, deleteProduct, listProducts } from '../actions/productActions';
+import { deleteUser, listUsers, register } from '../actions/userActions';
 import AdminHeader from '../components/AdminHeader';
 import AdminSide from '../components/AdminSide';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { PRODUCT_CREATE_RESET, PRODUCT_DELETE_RESET } from '../constants/productsConstants';
+import { USER_DETAILS_RESET, USER_REGISTER_RESET } from '../constants/userConstants';
+import socketIOClient from 'socket.io-client';
 
-export default function ProductListPage(props) {
-    const productList = useSelector(state => state.productList);
-    const { loading, error, products } = productList;
+export default function UserListPage(props) {
+    const dispatch = useDispatch();
+    const userList = useSelector(state => state.userList);
+    const { loading, error, users } = userList;
+    const userSignin = useSelector((state) => state.userSignin);
+    const { userInfo } = userSignin;
+    // const userRegister = useSelector(state => state.userRegister);
+    // const {
+    //     loading: createLoading,
+    //     error: createError,
+    //     success: createSuccess
+    // } = userRegister;
 
-    const productCreate = useSelector(state => state.productCreate);
+    const userDelete = useSelector((state) => state.userDelete);
     const {
-        loading: createLoading,
-        error: createError,
-        success: createSuccess,
-        product: createdProduct
-    } = productCreate;
-    const dispatch = useDispatch()
-
-    const productDelete = useSelector(state => state.productDelete);
-    const { loading: loadingDelete, error: errorDelete, success: successDelete } = productDelete;
+        loading: loadingDelete,
+        error: errorDelete,
+        success: successDelete,
+    } = userDelete;
 
     useEffect(() => {
-        if (createSuccess) {
-            dispatch({ type: PRODUCT_CREATE_RESET });
-            props.history.push(`/product/${createdProduct._id}/edit`)
-        }
-        dispatch(listProducts())
-    }, [dispatch, props.history, createdProduct, createSuccess]);
+        // if (createSuccess) {
+        //     dispatch({type: USER_REGISTER_RESET})
+        //     props.history.push(`/register`)
+        // }
+        dispatch(listUsers())
+        dispatch({
+            type: USER_DETAILS_RESET,
+        });
+    }, [dispatch, props.history]);
 
-    if (successDelete) {
-        dispatch({ type: PRODUCT_DELETE_RESET });
+    const createHandler = () => {
+        props.history.push(`/register`)
     }
-    const deleteHandler = (product) => {
-        if (window.confirm('Are you sure you want to delete?')) {
-            dispatch(deleteProduct(product._id))
+
+    const deleteHandler = (user) => {
+        if (window.confirm('Are you sure?')) {
+            dispatch(deleteUser(user._id));
         }
     };
-    const createHandler = () => {
-        dispatch(createProduct())
-    }
+
     return (
         <>
             <div class="row no-gutter">
@@ -57,18 +64,23 @@ export default function ProductListPage(props) {
                         <div>
                             <div className="bg-color">
                                 <div className="ow products-header">
-                                    <h1>Product List</h1>
+                                    <p className="display-4 font-weight-bold">Customers</p>
                                     <div className="button">
                                         {/* <!-- Button trigger modal --> */}
                                         <button type="button" className="btn btn-dark btn-block checkout-button mt-5 " onClick={createHandler}>
-                                            Post a Product
+                                            +Add
                                         </button>
                                     </div>
                                 </div>
+                                {/* {createLoading && <LoadingBox></LoadingBox>}
+                                {createError && <MessageBox variant="danger"> {createError} </MessageBox>} */}
                                 {loadingDelete && <LoadingBox></LoadingBox>}
-                                {errorDelete && <MessageBox variant="danger"> {errorDelete} </MessageBox>}
-                                {createLoading && <LoadingBox></LoadingBox>}
-                                {createError && <MessageBox variant="danger"> {createError} </MessageBox>}
+                                {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
+                                {successDelete && (
+                                    <MessageBox variant="success">User Deleted Successfully</MessageBox>
+                                )}
+                                {/* {createError && <MessageBox variant="danger"> {createError} </MessageBox>} */}
+
                                 {
                                     loading ? <LoadingBox></LoadingBox> :
                                         error ? <MessageBox variant="danger"> {error} </MessageBox>
@@ -78,28 +90,32 @@ export default function ProductListPage(props) {
                                                 <table className="table  table-container font">
                                                     <thead className="bg-dark text-white">
                                                         <tr>
-                                                            <th className="border-left border-light p-4">Name</th>
-                                                            <th className="border-left border-light p-4">Sku</th>
-                                                            <th className="border-left border-light p-4">Price</th>
-                                                            <th className="border-left border-light p-4">Stock</th>
-                                                            <th className="border-left border-light p-4">Category</th>
-                                                            <th className="border-left border-light p-4">Actions</th>
+                                                            <th className="border-left border-light p-4">User</th>
+                                                            <th className="border-left border-light p-4">Ordered</th>
+                                                            <th className="border-left border-light p-4">Phone</th>
+                                                            <th className="border-left border-light p-4">Country</th>
+                                                            <th className="border-left border-light p-4">Last Order</th>
+                                                            <th className="border-left border-light p-4">Status</th>
+                                                            <th className="border-left border-light p-4">Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {products.map((product) => (
-                                                            <tr key={product._id}>
-                                                                <td className="p-4 font-weight-bold"> <img src={product.image} alt={product.name} className="small smaller pr-3" />{product.name} </td>
-                                                                <td className="border-left border-light p-4 text-secondary">{product.sku}</td>
-                                                                <td className="border-left border-light font-weight-bold p-4">₦{product.price}</td>
-                                                                <td className="border-left border-light p-4 text-secondary">{product.countInStock}</td>
-                                                                <td className="border-left border-light p-4 text-secondary">{product.category}</td>
+                                                        {users.map((user) => (
+                                                            <tr key={user._id}>
+                                                                <td className="p-4 font-weight-bold"> <img src={user.image} alt={user.name} className="small smaller pr-3" />{user.name} <span> {user.email}</span> </td>
+                                                                <td className="border-left border-light p-4 text-secondary">{console.log(user.order)}</td>
+                                                                <td className="border-left border-light font-weight-bold p-4">{user.phone}</td>
+                                                                <td className="border-left border-light p-4 text-secondary"> {user.country}</td>
+                                                                <td className="border-left border-light p-4 text-secondary">{user.category}</td>
+                                                                <td className="border-left border-light p-4 text-secondary">
+                                                                   
+                                                                </td>
                                                                 <td className="border-left border-light p-4">
                                                                     <button
                                                                         type="button"
                                                                         className="btn btn-sm btn-outline-info small mr-3"
                                                                         onClick={() =>
-                                                                            props.history.push(`/product/${product._id}/edit`)
+                                                                            props.history.push(`/user/${user._id}/edit`)
                                                                         }
                                                                     >
                                                                         <i className="fa fa-pencil" aria-hidden="true"> </i>
@@ -107,7 +123,7 @@ export default function ProductListPage(props) {
                                                                     <button
                                                                         type="button"
                                                                         className="btn btn-sm btn-outline-danger small"
-                                                                        onClick={() => deleteHandler(product)}
+                                                                        onClick={() => deleteHandler(user)}
                                                                     >
                                                                         <i className="fa fa-trash" aria-hidden="true"> </i>
                                                                     </button>

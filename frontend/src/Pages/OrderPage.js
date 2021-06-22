@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { detailsOrder, payOrder } from '../actions/orderActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
+import Header from '../components/Header';
 
 export default function OrderPage(props) {
     const [sdkReady, setSdkReady] = useState(false)
@@ -58,6 +59,7 @@ export default function OrderPage(props) {
             :
             (
                 <>
+                <Header/>
                     <h1 className="p-4 ">Order  {order._id} </h1>
                     <div className="ow top ">
                         <div className="coll-2 order-page grey">

@@ -4,12 +4,13 @@ import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { useDispatch, useSelector } from 'react-redux'
 import { listProducts } from '../actions/productActions';
+import Header from '../components/Header';
 
-export default function ShopPage(props) {
+export default function IceCream(props) {
     const dispatch = useDispatch()
-    
+
     const productList = useSelector(state => state.productList)
-    const { loading, error, products } =productList
+    const { loading, error, products } = productList
 
     const userSignin = useSelector(state => state.userSignin);
     const { userInfo } = userSignin;
@@ -23,6 +24,7 @@ export default function ShopPage(props) {
 
     return (
         <div>
+            <Header />
             {loading ? (
                 <LoadingBox></LoadingBox>
             ) : error ? (
@@ -31,14 +33,19 @@ export default function ShopPage(props) {
                 <div className="pageheaders">
                     <div className="menu-header">
                         <p className="display-3 font-weight-bold">OUR MENU</p>
-                        <p className="font-weight-bold">ALL</p>
+                        <p className="font-weight-bold">Ice Cream</p>
                     </div>
                     <div className="ow center">
                         {
-                            products.map(product => (
-
-                                <Product product={product} />
-                            ))
+                            products.map(product => {
+                                if (product.category === 'Ice Cream') {
+                                    return (
+                                        <>
+                                            <Product product={product} />
+                                        </>
+                                    )
+                                }
+                            })
                         }
                     </div>
                 </div>

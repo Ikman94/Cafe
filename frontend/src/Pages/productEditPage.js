@@ -67,28 +67,27 @@ export default function ProductEditPage(props) {
     const [loadingUpload, setLoadingUpload] = useState(false);
     const [errorUpload, setErrorUpload] = useState('');
 
-
-    const userSignin = useSelector(state => state.userSignin);
+    const userSignin = useSelector((state) => state.userSignin);
     const { userInfo } = userSignin;
     const uploadFileHandler = async (e) => {
         const file = e.target.files[0];
-        const bodyFormData = new FormData(); // if you want to up a file using ajax that's how you use it 
-        bodyFormData.append('image', file); //image is the key and the value is file
-        setLoadingUpload(true)
+        const bodyFormData = new FormData();
+        bodyFormData.append('image', file);
+        setLoadingUpload(true);
         try {
             const { data } = await Axios.post('/api/uploads', bodyFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${userInfo.token}`
-                }
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
             });
             setImage(data);
-            setErrorUpload(false)
+            setLoadingUpload(false);
         } catch (error) {
             setErrorUpload(error.message);
-            setLoadingUpload(false)
+            setLoadingUpload(false);
         }
-    }
+    };
 
 
     return (
@@ -140,10 +139,10 @@ export default function ProductEditPage(props) {
                                     </input>
                                 </div>
                                 <div>
-                                    <label htmlFor="imgaeFile">ImageFile</label>
+                                    <label htmlFor="imageFile">Image File</label>
                                     <input
                                     type="file"
-                                    id="imagefile"
+                                    id="imageFile"
                                     label="Select a file"
                                     onChange={uploadFileHandler}
                                     ></input>

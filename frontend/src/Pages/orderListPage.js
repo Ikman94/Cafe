@@ -1,48 +1,46 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { createProduct, deleteProduct, listProducts } from '../actions/productActions';
+import { deleteOrder, listOrders } from '../actions/orderActions';
 import AdminHeader from '../components/AdminHeader';
 import AdminSide from '../components/AdminSide';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { PRODUCT_CREATE_RESET, PRODUCT_DELETE_RESET } from '../constants/productsConstants';
+import { ORDER_DELETE_RESET } from '../constants/orderConstans';
 
-export default function ProductListPage(props) {
-    const productList = useSelector(state => state.productList);
-    const { loading, error, products } = productList;
+export default function OrderListPage(props) {
 
-    const productCreate = useSelector(state => state.productCreate);
-    const {
-        loading: createLoading,
-        error: createError,
-        success: createSuccess,
-        product: createdProduct
-    } = productCreate;
-    const dispatch = useDispatch()
-
-    const productDelete = useSelector(state => state.productDelete);
-    const { loading: loadingDelete, error: errorDelete, success: successDelete } = productDelete;
-
-    useEffect(() => {
-        if (createSuccess) {
-            dispatch({ type: PRODUCT_CREATE_RESET });
-            props.history.push(`/product/${createdProduct._id}/edit`)
-        }
-        dispatch(listProducts())
-    }, [dispatch, props.history, createdProduct, createSuccess]);
-
-    if (successDelete) {
-        dispatch({ type: PRODUCT_DELETE_RESET });
+    const userSignin = useSelector(state => state.userSignin);
+    const { userInfo } = userSignin;
+    if (!userInfo) {
+        props.history.push('/signin')
     }
-    const deleteHandler = (product) => {
-        if (window.confirm('Are you sure you want to delete?')) {
-            dispatch(deleteProduct(product._id))
+
+    const orderList = useSelector(state => state.orderList);
+    const { loading, error, orders } = orderList;
+
+    const orderDelete = useSelector(state => state.orderDelete);
+    const { loading: loadingDelete, error: errorDelete, success: successDelete } = orderDelete;
+
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch({ type: ORDER_DELETE_RESET });
+        dispatch(listOrders());
+    }, [dispatch, successDelete]);
+
+    const createHandler = () => {
+
+    };
+
+    // if (successDelete) {
+    //     dispatch({ type: PRODUCT_DELETE_RESET });
+    // }
+    const deleteHandler = (order) => {
+        if (window.confirm('Are you sure to delete?')) {
+            dispatch(deleteOrder(order._id));
         }
     };
-    const createHandler = () => {
-        dispatch(createProduct())
-    }
+
     return (
         <>
             <div class="row no-gutter">
@@ -57,18 +55,16 @@ export default function ProductListPage(props) {
                         <div>
                             <div className="bg-color">
                                 <div className="ow products-header">
-                                    <h1>Product List</h1>
+                                    <h1>Order List</h1>
                                     <div className="button">
                                         {/* <!-- Button trigger modal --> */}
                                         <button type="button" className="btn btn-dark btn-block checkout-button mt-5 " onClick={createHandler}>
-                                            Post a Product
+                                            Post an Order
                                         </button>
                                     </div>
                                 </div>
                                 {loadingDelete && <LoadingBox></LoadingBox>}
                                 {errorDelete && <MessageBox variant="danger"> {errorDelete} </MessageBox>}
-                                {createLoading && <LoadingBox></LoadingBox>}
-                                {createError && <MessageBox variant="danger"> {createError} </MessageBox>}
                                 {
                                     loading ? <LoadingBox></LoadingBox> :
                                         error ? <MessageBox variant="danger"> {error} </MessageBox>
@@ -78,28 +74,32 @@ export default function ProductListPage(props) {
                                                 <table className="table  table-container font">
                                                     <thead className="bg-dark text-white">
                                                         <tr>
-                                                            <th className="border-left border-light p-4">Name</th>
-                                                            <th className="border-left border-light p-4">Sku</th>
-                                                            <th className="border-left border-light p-4">Price</th>
-                                                            <th className="border-left border-light p-4">Stock</th>
-                                                            <th className="border-left border-light p-4">Category</th>
+                                                            <th className="border-left border-light p-4">Order</th>
+                                                            <th className="border-left border-light p-4">Date</th>
+                                                            <th className="border-left border-light p-4">Status</th>
+                                                            <th className="border-left border-light p-4">Customer</th>
+                                                            <th className="border-left border-light p-4">Purchased</th>
+                                                            <th className="border-left border-light p-4">Total</th>
                                                             <th className="border-left border-light p-4">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {products.map((product) => (
-                                                            <tr key={product._id}>
-                                                                <td className="p-4 font-weight-bold"> <img src={product.image} alt={product.name} className="small smaller pr-3" />{product.name} </td>
-                                                                <td className="border-left border-light p-4 text-secondary">{product.sku}</td>
-                                                                <td className="border-left border-light font-weight-bold p-4">₦{product.price}</td>
-                                                                <td className="border-left border-light p-4 text-secondary">{product.countInStock}</td>
-                                                                <td className="border-left border-light p-4 text-secondary">{product.category}</td>
+                                                        {orders.map((order) => (
+                                                            <tr key={order._id}>
+                                                                <td className="p-4 font-weight-bold">{order._id} </td>
+                                                                <td className="border-left border-light p-4 text-secondary">{order.createdAt.substring(0, 10)}</td>
+                                                                <td className="border-left border-light font-weight-bold p-4">{order.isDelivered
+                                                                    ? order.deliveredAt.substring(0, 10)
+                                                                    : 'On Hold'}</td>
+                                                                <td className="border-left border-light p-4 text-secondary">{order.user.name} </td>
+                                                                <td className="border-left border-light p-4 text-secondary">{order.orderItems[0].qty > 1 ? order.orderItems[0].qty : order.orderItems[0].name}</td>
+                                                                <td className="border-left border-light p-4 text-secondary">{order.totalPrice.toFixed(2)}</td>
                                                                 <td className="border-left border-light p-4">
                                                                     <button
                                                                         type="button"
                                                                         className="btn btn-sm btn-outline-info small mr-3"
                                                                         onClick={() =>
-                                                                            props.history.push(`/product/${product._id}/edit`)
+                                                                            props.history.push(`/order/${order._id}`)
                                                                         }
                                                                     >
                                                                         <i className="fa fa-pencil" aria-hidden="true"> </i>
@@ -107,7 +107,7 @@ export default function ProductListPage(props) {
                                                                     <button
                                                                         type="button"
                                                                         className="btn btn-sm btn-outline-danger small"
-                                                                        onClick={() => deleteHandler(product)}
+                                                                        onClick={() => deleteHandler(order)}
                                                                     >
                                                                         <i className="fa fa-trash" aria-hidden="true"> </i>
                                                                     </button>

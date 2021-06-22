@@ -54,7 +54,7 @@ app.use((err, req, res, next) => {
     res.status(500).send({ message: err.message })
 });
 
-// const httpServer = http.Server(app);
+const httpServer = http.Server(app);
 // const io = new Server(httpServer, { cors: { origin: '*' } });
 // const users = []
 
@@ -126,9 +126,9 @@ app.use((err, req, res, next) => {
 //     });
 // });
 
-// httpServer.listen(port, () => {
-//     console.log(`Server is running on http://localhost:${port}`)
-// });
+httpServer.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`)
+});
 
 // app.listen(port, () => {
 //     console.log(`Server is running on http://localhost:${port}`)

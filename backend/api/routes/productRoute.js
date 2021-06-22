@@ -65,6 +65,17 @@ let routes = (app) => {
         }else{
             res.status(404).send({message: 'Product not Found'})
         }
+    }));
+
+    app.delete('/products/:id', isAuth, isAdmin, expressAsyncHandler(async (req, res) => {
+        const productId = req.params.id;
+        let product = await Product.findById(productId);
+        if(product){
+            const deletedProduct = await product.remove();
+            res.send({message: 'Product Deleted', product: deletedProduct})
+        }else{
+            res.status(404).send({ message: 'Product not Found' })
+        }
     }))
 
 }

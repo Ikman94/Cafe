@@ -1,14 +1,23 @@
 const express = require('express');
 const expressAsyncHandler = require('express-async-handler');
 const Order = require('../models/orderModel');
+const User = require('../models/userModel');
 const isAuth = require('../../utils');
+const isAdmin = require('../../utils');
 
 let routes = (app) => {
 
     app.get('/orders/mine', isAuth, expressAsyncHandler( async (req, res) => {
         let orders = await Order.find({user: req.user._id});
         res.send(orders)
-    }))
+    }));
+
+    app.get('/orders', isAuth, isAdmin, expressAsyncHandler( async (req, res) => {
+        let orders = await Order.find({}).populate('user', 'name');
+        orders.order = await User.find({ order: orders.objectId })
+        // console.log(orders.order)
+        res.send(orders);
+    }));
 
     app.post('/orders', isAuth, expressAsyncHandler(async (req, res) => {
         if (req.body.orderItems.length === 0) {
@@ -58,5 +67,15 @@ let routes = (app) => {
             res.status(404).send({ mesage: 'Order not Found' })
         }
     }));
+    app.delete('/orders/:id', isAuth, isAdmin, expressAsyncHandler(async (req, res) => {
+        const orderId = req.params.id;
+        let order = await Order.findById(orderId);
+        if (order) {
+            const deletedOrder = await order.remove();
+            res.send({ message: 'Order Deleted', product: deletedOrder })
+        } else {
+            res.status(404).send({ message: 'Order not Found' })
+        }
+    }))
 }
 module.exports = routes;

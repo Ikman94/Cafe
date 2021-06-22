@@ -2,16 +2,34 @@ const bcrypt = require('bcryptjs')
 const data = {
     users:[
         {
-            name: 'Ikechukwu',
-            email:'admin@example.com',
-            password: bcrypt.hashSync('1234', 8),
-            isAdmin: true
+            name: "Gozie Iwuh", 
+            email: "gozieiwuh@yahoo.com",
+            title: "Mr",
+            password: "1111",
+            phone: "07019811111",
+            dob: "1993/05/03",
+            address: {
+                streetName: "Zaria Street",
+                city: "Abuja",
+                postalCode: "110009",
+                country: "Nigeria",
+            },
+            nationality: "Nigerian",
         },
         {
-            name: 'John',
-            email: 'user@example.com',
-            password: bcrypt.hashSync('1234', 8),
-            isAdmin: false
+            name: "Obinna Iwuh",
+            email: "obinnaiwuh@yahoo.com",
+            title: "Mr",
+            password: "1111",
+            phone: "09010061980",
+            dob: "1996/09/03",
+            address: {
+                streetName: "Zaria Street",
+                city: "Abuja",
+                postalCode: "110009",
+                country: "Nigeria",
+            },
+            nationality: "Nigerian",
         }
 
     ],

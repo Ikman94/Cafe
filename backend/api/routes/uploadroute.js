@@ -2,16 +2,16 @@
  const express =require('express');
 const isAuth = require('../../utils');
 
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, './uploads');
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads')
     },
-    filename(req, file, cb) {
-        cb(null, `${Date.now()}.jpg`);
-    },
-});
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
 
-const upload = multer({ storage });
+let upload = multer({ storage })
 
  let routes = (app) => {
      app.post('/uploads', isAuth, upload.single('image'), (req, res) => {
